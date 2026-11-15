@@ -10,6 +10,7 @@
 
 export type SurfaceMode = 'auto' | 'light' | 'dark';
 export type EngagementMode = 'full' | 'broadcast';
+export type GuestMode = 'prompt' | 'readonly' | 'open';
 export type ProviderMode = 'external-plugin' | 'mtchship' | 'none';
 export type HeaderStyle = 'solid' | 'tinted' | 'minimal';
 export type EventAuthorType = 'provider' | 'official' | 'system';
