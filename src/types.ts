@@ -155,3 +155,4 @@ export interface ChameleonEventMap {
   'mc:form-submit': CustomEvent<FormSubmitDetail>;
   'mc:auth-required': CustomEvent<AuthRequiredDetail>;
 }
+
