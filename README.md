@@ -31,6 +31,8 @@ Maintained by **Lovorise Ltd** (UK) under the **Apache License 2.0**.
 * **Modules:** Live Chat & Thread Engine, Interactive Forms (polls, quizzes, ratings), Signal Beacon (Pub/Sub), Story & News Feed API, and optional in-memory AI Gatekeeper (disabled during default blind pass-through).
 * **Zero-Retention Pipeline:** Processes traffic strictly in volatile RAM with zero disk writes, forwards payloads directly to your S3-compatible Object Storage or Cloud Server within a `5000 ms` timeout, and overwrites RAM buffers with `0x00` immediately upon delivery or failure.
 
+> **Availability Note:** Self-service provisioning via the **MTCHSHIP Control Plane Dashboard** is currently in development. To request early access, CNAME onboarding, or API credentials for the edge add-ons, please contact **Lovorise Ltd** directly.
+
 ---
 
 ## Integration
@@ -52,18 +54,23 @@ Load the standalone ES module directly from your package bundle, CDN, or assets 
   guest-mode="prompt"
   chat-provider="external-plugin"
   forms-provider="external-plugin">
+
   <div slot="lineups">
     <your-provider-lineups match-id="sl-2026-0412"></your-provider-lineups>
   </div>
+
   <div slot="stats">
     <your-provider-stats match-id="sl-2026-0412"></your-provider-stats>
   </div>
+
   <div slot="standings">
     <your-provider-standings competition-id="ch-super-league"></your-provider-standings>
   </div>
+
   <div slot="external-chat-plugin">
     <your-chat-widget match-id="sl-2026-0412"></your-chat-widget>
   </div>
+
   <div slot="external-forms-plugin">
     <your-polls-widget match-id="sl-2026-0412"></your-polls-widget>
   </div>
@@ -198,4 +205,3 @@ Tabs for `lineups`, `stats`, and `standings` are automatically hidden if their s
 | `configureTeam()` | `(config: TeamConfig) => void` | Sets branding, colours, header style, embed allowlist, customer storage target, sport labels, locale, and reactions. |
 | `setViewerContext()` | `(viewer: ViewerContext \| null) => void` | Sets viewer auth state to toggle between guest mode and active composers. |
 | `setMatchState()` | `(state: MatchState) => void` | Reconciles scores, clock, period, scorers, events, forms, and stored threads via keyed diffing. |
-| `appendThreadReply()` | `(eventId: string, reply: ThreadReply) => void` | Appends or updates a nested thread reply in place without full-state re-hydration. |
