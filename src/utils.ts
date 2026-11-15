@@ -8,10 +8,6 @@
  *     http://apache.org
  */
 
-// ---------------------------------------------------------------------------
-// 1. Domain & Branded Types (Compile-Time Security Guarantees)
-// ---------------------------------------------------------------------------
-
 declare const __brand: unique symbol;
 type Brand<T, TBrand extends string> = T & { readonly [__brand]: TBrand };
 
@@ -34,10 +30,6 @@ export interface NativeTransportAdapter {
   send(eventName: string, detail: unknown, serializedEnvelope: string): void;
 }
 
-// ---------------------------------------------------------------------------
-// 2. Global Environment Augmentation (Zero Runtime Type-Casting)
-// ---------------------------------------------------------------------------
-
 declare global {
   interface Window {
     readonly webkit?: {
@@ -53,10 +45,6 @@ declare global {
     };
   }
 }
-
-// ---------------------------------------------------------------------------
-// 3. Hardened Sanitization & WCAG Contrast Utilities
-// ---------------------------------------------------------------------------
 
 const HEX_COLOR_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 const SHORT_HEX_RE = /^#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?$/;
@@ -182,10 +170,6 @@ export function sanitizeUrl(
   return parsed.toString() as SafeHttpUrl;
 }
 
-// ---------------------------------------------------------------------------
-// 4. Deterministic String & Safe DOM Construction
-// ---------------------------------------------------------------------------
-
 const DEFAULT_MONOGRAM = 'TM';
 const MAX_MONOGRAM_LENGTH = 4;
 
@@ -240,10 +224,6 @@ export function createEl<K extends keyof HTMLElementTagNameMap>(
   return el;
 }
 
-// ---------------------------------------------------------------------------
-// 5. Resilient, Observable Cross-Platform Event Dispatcher
-// ---------------------------------------------------------------------------
-
 export function emitHostEvent<T>(
   host: HTMLElement,
   eventName: string,
@@ -269,7 +249,6 @@ export function emitHostEvent<T>(
     return serializedEnvelope;
   };
 
-  // iOS WKWebView Bridge
   const webkitHandler = window.webkit?.messageHandlers?.mtchship;
   if (webkitHandler && typeof webkitHandler.postMessage === 'function') {
     try {
@@ -279,7 +258,6 @@ export function emitHostEvent<T>(
     }
   }
 
-  // Android WebView Bridge
   const androidBridge = window.MtchshipNative;
   if (androidBridge) {
     try {
@@ -293,7 +271,6 @@ export function emitHostEvent<T>(
     }
   }
 
-  // Extensible Custom Transports (e.g., React Native, Electron, PostMessage)
   if (options?.customTransports) {
     for (const transport of options.customTransports) {
       try {
