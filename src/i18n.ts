@@ -17,6 +17,7 @@ export interface MatchCentreLocale {
   readonly tabPolls: string;
   readonly scoringHeading: string;
   readonly emptyEvents: string;
+  readonly emptyForms: string;
   readonly replyAction: string;
   readonly repliesLabel: string;
   readonly commentPlaceholder: string;
@@ -41,6 +42,7 @@ export const DEFAULT_LOCALE: MatchCentreLocale = Object.freeze({
   tabPolls: 'Polls',
   scoringHeading: 'Scoring',
   emptyEvents: 'Waiting for match updates.',
+  emptyForms: 'No active polls or quizzes.',
   replyAction: 'Reply',
   repliesLabel: 'Replies',
   commentPlaceholder: 'Join the match discussion...',
@@ -65,6 +67,7 @@ export const BUILTIN_LOCALES: Readonly<Record<SupportedLanguage, MatchCentreLoca
     tabPolls: 'Umfragen',
     scoringHeading: 'Torschützen',
     emptyEvents: 'Warte auf Spielereignisse.',
+    emptyForms: 'Keine aktiven Umfragen oder Quizze.',
     replyAction: 'Antworten',
     repliesLabel: 'Antworten',
     commentPlaceholder: 'Kommentar zum Spiel verfassen...',
@@ -84,6 +87,7 @@ export const BUILTIN_LOCALES: Readonly<Record<SupportedLanguage, MatchCentreLoca
     tabPolls: 'Sondages',
     scoringHeading: 'Buteurs',
     emptyEvents: 'En attente des actions du match.',
+    emptyForms: 'Aucun sondage ou quiz actif.',
     replyAction: 'Répondre',
     repliesLabel: 'Réponses',
     commentPlaceholder: 'Participer à la discussion...',
@@ -103,6 +107,7 @@ export const BUILTIN_LOCALES: Readonly<Record<SupportedLanguage, MatchCentreLoca
     tabPolls: 'Encuestas',
     scoringHeading: 'Goleadores',
     emptyEvents: 'Esperando actualizaciones del partido.',
+    emptyForms: 'No hay encuestas ni cuestionarios activos.',
     replyAction: 'Responder',
     repliesLabel: 'Respuestas',
     commentPlaceholder: 'Únete a la conversación...',
@@ -122,6 +127,7 @@ export const BUILTIN_LOCALES: Readonly<Record<SupportedLanguage, MatchCentreLoca
     tabPolls: 'Sondaggi',
     scoringHeading: 'Marcatori',
     emptyEvents: 'In attesa di aggiornamenti.',
+    emptyForms: 'Nessun sondaggio o quiz attivo.',
     replyAction: 'Rispondi',
     repliesLabel: 'Risposte',
     commentPlaceholder: 'Partecipa alla discussione...',
@@ -217,7 +223,7 @@ export class I18nManager {
   private resolveLanguage(tag: string | null | undefined): SupportedLanguage {
     if (!tag) return 'en';
     const normalized = tag.trim().replace(/_/g, '-').toLowerCase();
-    const base = normalized.split('-')[0] ?? 'en';
+    const base = normalized.split('-') ?? 'en';
 
     if (Object.prototype.hasOwnProperty.call(BUILTIN_LOCALES, normalized)) {
       return normalized as SupportedLanguage;
