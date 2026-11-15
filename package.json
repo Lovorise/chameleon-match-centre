@@ -21,11 +21,12 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com"
+    "url": "git+https://github.com"
   },
   "keywords": [
     "web-component",
@@ -38,6 +39,9 @@
     "csp"
   ],
   "sideEffects": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "typescript": "^5.7.0"
   }
