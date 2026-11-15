@@ -1,6 +1,6 @@
 # Chameleon Match Centre
 
-`<chameleon-match-centre>` is a zero-dependency Web Component SDK for desktop and mobile browsers. It adapts to your UI, colours, and sports data feeds, and runs standalone on your infrastructure—with optional stateless **Lovorise / MTCHSHIP** edge forwarding add-ons via CNAME.
+`<chameleon-match-centre>` is a zero-dependency Web Component SDK for desktop and mobile browsers. It adapts to your UI, colours, device language, light/dark mode, and sports data feeds, and runs standalone on your infrastructure—with optional stateless **Lovorise / MTCHSHIP** edge forwarding add-ons via CNAME.
 
 Maintained by **Lovorise Ltd** (UK) under the **Apache License 2.0**.
 
@@ -8,7 +8,7 @@ Maintained by **Lovorise Ltd** (UK) under the **Apache License 2.0**.
 
 ## Core Capabilities
 
-* **UI & Theme Adaptation:** Follows host light/dark mode (`surface-mode="auto"`), brand colours, header styles, icons, and layout containers.
+* **Automatic Device & Host Adaptation:** Automatically detects device/host light or dark mode (`surface-mode="auto"` via `prefers-color-scheme`) and device language (`lang` attribute or `navigator.language`), while matching brand colours, header styles, and layout containers.
 * **Style & CSP Isolation:** Closed Shadow DOM with `all: initial` and Constructable Stylesheets (`adoptedStyleSheets`) for strict CSP environments (zero inline styles/scripts).
 * **XSS & Media Hardening:** Renders text strictly via `textContent`, restricts social embeds to `allowedEmbedOrigins`, and falls back to a styled `teamShort` monogram if `crestUrl` fails.
 * **Keyed DOM Diffing:** `setMatchState()` updates by `event.id` and `thread.id`, preserving open reply inputs, active tabs, and scroll positions during live clock ticks.
@@ -45,25 +45,25 @@ Load the standalone ES module directly from your own CDN, cloud storage, or asse
 ```html
 <chameleon-match-centre
   id="match-centre"
-  match-id="PROVIDER-FB-2026-01"
+  match-id="PROVIDER-FB-01"
   surface-mode="auto"
   engagement-mode="full"
   chat-provider="external-plugin"
   forms-provider="external-plugin">
   <div slot="lineups">
-    <your-provider-lineups match-id="PROVIDER-FB-2026-01"></your-provider-lineups>
+    <your-provider-lineups match-id="PROVIDER-FB-01"></your-provider-lineups>
   </div>
   <div slot="stats">
-    <your-provider-stats match-id="PROVIDER-FB-2026-01"></your-provider-stats>
+    <your-provider-stats match-id="PROVIDER-FB-01"></your-provider-stats>
   </div>
   <div slot="standings">
-    <your-provider-standings competition-id="COMP-2026"></your-provider-standings>
+    <your-provider-standings competition-id="COMP-01"></your-provider-standings>
   </div>
   <div slot="external-chat-plugin">
-    <your-chat-widget match-id="PROVIDER-FB-2026-01"></your-chat-widget>
+    <your-chat-widget match-id="PROVIDER-FB-01"></your-chat-widget>
   </div>
   <div slot="external-forms-plugin">
-    <your-polls-widget match-id="PROVIDER-FB-2026-01"></your-polls-widget>
+    <your-polls-widget match-id="PROVIDER-FB-01"></your-polls-widget>
   </div>
 </chameleon-match-centre>
 ```
@@ -93,12 +93,12 @@ mc?.configureTeam({
 
 mc?.setViewerContext({
   isAuthenticated: true,
-  userId: 'USR-8841',
-  displayName: 'Alex M.',
+  userId: 'USR-01',
+  displayName: 'User A',
 });
 
 mc?.setMatchState({
-  matchId: 'PROVIDER-FB-2026-01',
+  matchId: 'PROVIDER-FB-01',
   competition: 'Championship Series',
   opponent: { name: 'Away Team', short: 'AWY', primary: '#dc2626', crestUrl: null },
   homeScore: 1,
@@ -116,8 +116,8 @@ mc?.setMatchState({
       threads: [
         {
           id: 'THR-01',
-          author: 'Sarah K.',
-          text: 'Brilliant build-up play down the left flank!',
+          author: 'User B',
+          text: 'Great build-up play down the left flank.',
           timestamp: '16:22 UTC',
           reactions: { '🔥': 14 },
         },
@@ -155,7 +155,8 @@ chameleon-match-centre {
 | Attribute | Values | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `match-id` | `string` | — | Fixture ID from your data provider or database. |
-| `surface-mode` | `auto` \| `light` \| `dark` | `auto` | Colour theme (`auto` follows host or system preference). |
+| `surface-mode` | `auto` \| `light` \| `dark` | `auto` | Colour theme (`auto` follows device/host preference). |
+| `lang` | `string` | Device/HTML `lang` | BCP 47 language tag (e.g. `en`, `de`, `fr`, `es`, `it`). Falls back to `navigator.language`. |
 | `engagement-mode` | `full` \| `broadcast` | `full` | Enables chat and forms (`full`) or restricts to scores and commentary (`broadcast`). |
 | `chat-provider` | `external-plugin` \| `mtchship` \| `none` | `external-plugin` | Chat mode (`external-plugin`, optional `mtchship` add-on, or `none`). |
 | `forms-provider` | `external-plugin` \| `mtchship` \| `none` | `external-plugin` | Forms mode (`external-plugin`, optional `mtchship` add-on, or `none`). |
@@ -194,15 +195,3 @@ All events bubble (`bubbles: true, composed: true`) for host web apps and native
 | `mc:comment-submit` | `{ matchId: string; parentId?: string; text: string }` | User submits a chat message or nested reply. |
 | `mc:form-submit` | `{ matchId: string; formId: string; response: unknown }` | User submits a poll, quiz, or rating. |
 | `mc:auth-required` | `{ matchId: string; action: 'comment' \| 'react' \| 'form' }` | Unauthenticated viewer triggers an interactive action. |
-| `mc:error` | `{ code: 'INVALID_STATE' \| 'IMAGE_LOAD_FAILED' \| 'EMBED_BLOCKED'; message: string }` | Non-fatal validation, asset fallback, or CSP allowlist error. |
-
-### TypeScript Definitions
-
-```ts
-export interface TeamConfig {
-  teamId: string;
-  teamName: string;
-  teamShort: string;
-  primaryColor: string;
-  crestUrl?: string | null;
-  headerStyle?: 'tinted' | 'solid' | 'minimal';
