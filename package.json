@@ -1,0 +1,44 @@
+{
+  "name": "@lovorise/chameleon-match-centre",
+  "version": "1.0.0",
+  "description": "Web Component SDK for live and historical sports match centres. Adapts to your UI, colours, and sports data feeds with strict Shadow DOM and CSP isolation.",
+  "license": "Apache-2.0",
+  "author": "Lovorise Ltd",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com"
+  },
+  "keywords": [
+    "web-component",
+    "custom-element",
+    "shadow-dom",
+    "sports",
+    "match-centre",
+    "live-score",
+    "typescript",
+    "csp"
+  ],
+  "sideEffects": true,
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
