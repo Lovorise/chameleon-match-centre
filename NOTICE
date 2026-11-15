@@ -1,0 +1,14 @@
+Chameleon Match Centre (@lovorise/chameleon-match-centre)
+Copyright 2026 Lovorise Ltd (United Kingdom)
+
+This product includes software developed by Lovorise Ltd.
+
+Trademarks & Branding:
+"Lovorise" and "MTCHSHIP" are trademarks of Lovorise Ltd. Under Section 6
+of the Apache License, Version 2.0, the license grants no rights to use these
+trademarks except as required for reasonable and customary attribution.
+
+Optional Edge Add-ons:
+This open-source Web Component runs standalone with zero Lovorise backend
+dependencies. Optional stateless MTCHSHIP edge forwarding modules referenced
+in the documentation are separate commercial services provided by Lovorise Ltd.
