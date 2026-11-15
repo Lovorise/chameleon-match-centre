@@ -16,6 +16,13 @@ export type HeaderStyle = 'solid' | 'tinted' | 'minimal';
 export type EventAuthorType = 'provider' | 'official' | 'system';
 export type MatchCentreTab = 'commentary' | 'lineups' | 'stats' | 'standings' | 'polls';
 
+export interface CustomerStorageTarget {
+  readonly driver: 's3' | 'webhook';
+  readonly bucket?: string;
+  readonly prefix?: string;
+  readonly destinationUrl?: string;
+}
+
 export interface SportConfig {
   readonly scoreIcon?: string;
   readonly scoringHeading?: string;
@@ -35,6 +42,7 @@ export interface TeamConfig {
   readonly allowedEmbedOrigins?: readonly string[];
   readonly sport?: SportConfig;
   readonly locale?: Readonly<Record<string, string>>;
+  readonly storage?: CustomerStorageTarget;
 }
 
 export interface ViewerContext {
@@ -155,4 +163,3 @@ export interface ChameleonEventMap {
   'mc:form-submit': CustomEvent<FormSubmitDetail>;
   'mc:auth-required': CustomEvent<AuthRequiredDetail>;
 }
-
