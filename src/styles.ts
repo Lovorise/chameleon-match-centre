@@ -254,7 +254,9 @@ export const COMPONENT_CSS = `
 .cmc-tab:focus-visible,
 .cmc-btn:focus-visible,
 .cmc-reaction-btn:focus-visible,
-.cmc-input:focus-visible {
+.cmc-input:focus-visible,
+.cmc-form-option:focus-visible,
+.cmc-rating-btn:focus-visible {
   outline: 2px solid var(--_home-primary);
   outline-offset: -2px;
 }
@@ -469,35 +471,54 @@ export const COMPONENT_CSS = `
   gap: 6px;
 }
 
-@container (max-width: 520px) {
-  .cmc-header {
-    padding: 12px 14px;
-  }
-  .cmc-team-name {
-    font-size: 13px;
-  }
-  .cmc-score {
-    font-size: 22px;
-  }
-  .cmc-panel {
-    padding: 12px 14px;
-  }
+.cmc-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cmc-tab {
-    transition: none;
-  }
+.cmc-form-card {
+  padding: 14px 16px;
+  border: 1px solid var(--_border);
+  border-radius: 10px;
+  background: var(--_surface-alt);
 }
-`;
 
-let sharedSheet: CSSStyleSheet | null = null;
-
-export function getComponentStyleSheet(): CSSStyleSheet | null {
-  if (typeof CSSStyleSheet === 'undefined') return null;
-  if (!sharedSheet) {
-    sharedSheet = new CSSStyleSheet();
-    sharedSheet.replaceSync(COMPONENT_CSS);
-  }
-  return sharedSheet;
+.cmc-form-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
 }
+
+.cmc-form-prompt {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cmc-form-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cmc-form-option {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  appearance: none;
+  border: 1px solid var(--_border);
+  border-radius: 8px;
+  background: var(--_bg);
+  color: var(--_text);
+  font: inherit;
+  font-size: 13px;
+  padding: 9px 12px;
+  text-align: start;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
