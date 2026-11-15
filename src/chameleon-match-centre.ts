@@ -8,15 +8,18 @@
  *     http://apache.org
  */
 
+import { forwardToMtchshipEdge } from './edge-client.js';
 import { I18nManager } from './i18n.js';
 import { COMPONENT_CSS, getComponentStyleSheet } from './styles.js';
 import type {
   AuthRequiredDetail,
   CommentSubmitDetail,
   EngagementMode,
+  FormSubmitDetail,
   GuestMode,
   MatchCentreTab,
   MatchEvent,
+  MatchFormQuestion,
   MatchState,
   ProviderMode,
   ReactionDetail,
@@ -64,6 +67,7 @@ export class ChameleonMatchCentre extends BaseElement {
   private activeTab: MatchCentreTab = 'commentary';
   private openReplyInputs = new Set<string>();
   private draftReplies = new Map<string, string>();
+  private submittedForms = new Map<string, string | number>();
   private mainDraft = '';
   private failureMessage: string | null = null;
 
@@ -76,6 +80,8 @@ export class ChameleonMatchCentre extends BaseElement {
   private panels = new Map<MatchCentreTab, HTMLElement>();
   private feedContainerEl!: HTMLElement;
   private composerContainerEl!: HTMLElement;
+  private formsContainerEl!: HTMLElement;
+  private formsSlotEl!: HTMLSlotElement;
   private eventNodes = new Map<string, HTMLElement>();
 
   constructor() {
@@ -115,6 +121,7 @@ export class ChameleonMatchCentre extends BaseElement {
     }
     if (name === 'match-id' && newValue && this._matchState && this._matchState.matchId !== newValue) {
       this.eventNodes.clear();
+      this.submittedForms.clear();
       this.feedContainerEl.replaceChildren();
     }
     this.renderAll();
@@ -140,6 +147,7 @@ export class ChameleonMatchCentre extends BaseElement {
     }
 
     this.renderComposer();
+    this.renderForms();
     if (this._matchState) {
       this.reconcileEvents(this._matchState.events);
     }
@@ -157,11 +165,13 @@ export class ChameleonMatchCentre extends BaseElement {
 
     if (isNewMatch) {
       this.eventNodes.clear();
+      this.submittedForms.clear();
       this.feedContainerEl.replaceChildren();
     }
 
     this.renderHeader();
     this.reconcileEvents(state.events ?? []);
+    this.renderForms();
     this.syncTabVisibility();
   }
 
@@ -203,6 +213,37 @@ export class ChameleonMatchCentre extends BaseElement {
     this.failureMessage =
       userMessage?.trim() || this.i18n.t('shipTimeoutError', { timeoutMs });
     this.renderAlert();
+  }
+
+  private shipToEdgeIfEnabled(
+    provider: ProviderMode,
+    operation: ShipFailurePayload['operation'],
+    payload: unknown
+  ): void {
+    if (provider !== 'mtchship') return;
+
+    const endpoint = this.getAttribute('edge-endpoint');
+    const viewer = this._viewer?.isAuthenticated
+      ? {
+          ...(this._viewer.userId !== undefined ? { userId: this._viewer.userId } : {}),
+          ...(this._viewer.displayName !== undefined ? { displayName: this._viewer.displayName } : {}),
+          ...(this._viewer.role !== undefined ? { role: this._viewer.role } : {}),
+        }
+      : undefined;
+
+    void forwardToMtchshipEdge(
+      endpoint,
+      {
+        matchId: this.getActiveMatchId(),
+        ...(this._teamConfig?.teamId !== undefined ? { teamId: this._teamConfig.teamId } : {}),
+        operation,
+        ...(viewer !== undefined ? { viewer } : {}),
+        ...(this._teamConfig?.storage !== undefined ? { storage: this._teamConfig.storage } : {}),
+        payload,
+        sentAt: new Date().toISOString(),
+      },
+      (failure) => this.reportShipFailure(failure)
+    );
   }
 
   private adoptStyles(): void {
@@ -275,47 +316,3 @@ export class ChameleonMatchCentre extends BaseElement {
     return this.getGuestMode() === 'readonly';
   }
 
-  private buildSkeleton(): void {
-    this.shellEl = createEl('section', {
-      className: 'cmc-shell',
-      attrs: { part: 'shell' },
-    });
-
-    this.headerEl = createEl('header', { className: 'cmc-header' });
-    this.shellEl.appendChild(this.headerEl);
-
-    this.alertEl = createEl('div', {
-      className: 'cmc-alert',
-      attrs: { role: 'alert', hidden: '' },
-    });
-    this.alertTextEl = createEl('span');
-    const dismissBtn = createEl('button', {
-      className: 'cmc-btn--ghost',
-      text: '✕',
-      attrs: { type: 'button', 'aria-label': 'Dismiss' },
-    });
-    dismissBtn.addEventListener('click', () => {
-      this.failureMessage = null;
-      this.renderAlert();
-    });
-    this.alertEl.append(this.alertTextEl, dismissBtn);
-    this.shellEl.appendChild(this.alertEl);
-
-    this.tabListEl = createEl('div', {
-      className: 'cmc-tablist',
-      attrs: { role: 'tablist' },
-    });
-
-    const tabs: readonly MatchCentreTab[] = ['commentary', 'lineups', 'stats', 'standings', 'polls'];
-    tabs.forEach((tabKey) => {
-      const btn = createEl('button', {
-        className: 'cmc-tab',
-        attrs: {
-          type: 'button',
-          role: 'tab',
-          id: `tab-${tabKey}`,
-          'aria-controls': `panel-${tabKey}`,
-          'aria-selected': tabKey === this.activeTab ? 'true' : 'false',
-          tabindex: tabKey === this.activeTab ? '0' : '-1',
-        },
-      });
